@@ -288,6 +288,10 @@
             var dx = coords[0] - lastMouseCoords[0];
             var dy = -(coords[1] - lastMouseCoords[1]);
 
+            if (worldUp[2] === 1) {
+                dx = -dx;
+            }
+
             // update spherical coordinates based on mouse coordinates
             azimuth += -dx * .01;
             polar += dy * .01;
