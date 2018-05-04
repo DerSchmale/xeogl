@@ -26,6 +26,7 @@
 
     // important to know what way is "up" in the world
     var worldUp = [0, 1, 0];
+    // var worldUp = [0, 0, 1];
 
     //--------------------------------------------
     // Box entities
@@ -143,6 +144,11 @@
     camera.look = [-2.2823824882507324, 0.8718322515487671, -2.0741031169891357];
     camera.up = [0.30852949619293213, 0.7529196739196777, -0.5813107490539551];
 
+    // FOR Z-up
+    // camera.eye = [-5.403568744659424, 3.806628942489624, 6.691194534301758];
+    // camera.look = [-2.2823824882507324, -2.0741031169891357, 0.8718322515487671];
+    // camera.up = [0.30852949619293213, -0.5813107490539551, 0.7529196739196777];
+
     //--------------------------------------------
     // Create helper to show ray-Entity hits
     //--------------------------------------------
@@ -215,12 +221,15 @@
             var diff = xeogl.math.vec3();
             xeogl.math.subVec3(camera.eye, pivotPoint, diff);
 
-            // the real polar coordinate relative to the pivot point
-            var polarWorld = Math.acos(diff[1] / xeogl.math.lenVec3(diff));
-
             // find spherical coordinates relative to the pivot point *with the offset removed*, because the pivoting
             // math all works without the offset (which is applied later)
             xeogl.math.addVec3(diff, offset);
+
+            if (worldUp[2] === 1) {
+                var t = diff[1];
+                diff[1] = diff[2];
+                diff[2] = t;
+            }
 
             radius = xeogl.math.lenVec3(diff);
             polar = Math.acos(diff[1] / radius);
@@ -294,6 +303,13 @@
                 radius * Math.cos(polar),
                 radius * Math.sin(polar) * Math.cos(azimuth)
             ];
+
+            // worldUp is z
+            if (worldUp[2] === 1) {
+                var t = pos[1];
+                pos[1] = pos[2];
+                pos[2] = t;
+            }
 
             // the absolute position in world space
             xeogl.math.addVec3(pos, pivotPoint);
